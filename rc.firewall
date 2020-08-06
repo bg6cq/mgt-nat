@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo 1 >  /proc/sys/net/ipv4/ip_forward
+
+iptables -F
+iptables -t nat -F
+
+
+iptables -A FORWARD -j DROP -p tcp --dport 445
+
+iptables -A FORWARD -j DROP -s 10.10.75.80
