@@ -2,10 +2,52 @@
 
 echo 1 >  /proc/sys/net/ipv4/ip_forward
 
+cd /proc/sys/net/netfilter
+echo 60 > nf_conntrack_generic_timeout
+echo 10 > nf_conntrack_icmp_timeout
+echo 10 > nf_conntrack_icmpv6_timeout
+echo 10 > nf_conntrack_tcp_timeout_close
+echo 10 > nf_conntrack_tcp_timeout_last_ack
+echo 10 > nf_conntrack_tcp_timeout_time_wait
+echo 10 > nf_conntrack_tcp_timeout_close_wait
+echo 10 > nf_conntrack_tcp_timeout_max_retrans
+echo 10 > nf_conntrack_tcp_timeout_unacknowledged
+echo 600 > nf_conntrack_tcp_timeout_established
+echo 60 > nf_conntrack_tcp_timeout_syn_recv
+echo 10 > nf_conntrack_tcp_timeout_fin_wait
+echo 30 > nf_conntrack_tcp_timeout_syn_sent
+echo 10 > nf_conntrack_udp_timeout
+echo 60 > nf_conntrack_udp_timeout_stream
+
+
 iptables -F
 iptables -t nat -F
 
 
 iptables -A FORWARD -j DROP -p tcp --dport 445
-
 iptables -A FORWARD -j DROP -s 10.10.75.80
+
+iptables -t nat -A POSTROUTING -j ACCEPT -d 202.38.64.0/19
+iptables -t nat -A POSTROUTING -j ACCEPT -d 210.45.64.0/20
+iptables -t nat -A POSTROUTING -j ACCEPT -d 210.45.112.0/20
+iptables -t nat -A POSTROUTING -j ACCEPT -d 211.86.144.0/20
+iptables -t nat -A POSTROUTING -j ACCEPT -d 222.195.64.0/19
+iptables -t nat -A POSTROUTING -j ACCEPT -d 114.214.160.0/19
+iptables -t nat -A POSTROUTING -j ACCEPT -d 114.214.192.0/18
+
+iptables -t nat -A POSTROUTING -j ACCEPT -d 10.0.0.0/8
+iptables -t nat -A POSTROUTING -j ACCEPT -d 192.168.0.0/16
+
+iptables -t nat -A POSTROUTING -j SNAT -o eth0 --to 202.38.64.120
+
+iptables -A FORWARD -j ACCEPT -o eth0 -d 202.38.64.0/19
+iptables -A FORWARD -j ACCEPT -o eth0 -d 210.45.64.0/20
+iptables -A FORWARD -j ACCEPT -o eth0 -d 210.45.112.0/20
+iptables -A FORWARD -j ACCEPT -o eth0 -d 211.86.144.0/20
+iptables -A FORWARD -j ACCEPT -o eth0 -d 222.195.64.0/19
+iptables -A FORWARD -j ACCEPT -o eth0 -d 114.214.160.0/19
+iptables -A FORWARD -j ACCEPT -o eth0 -d 114.214.192.0/18
+iptables -A FORWARD -j ACCEPT -o eth0 -d 10.0.0.0/8
+iptables -A FORWARD -j ACCEPT -o eth0 -d 192.168.0.0/16
+iptables -A FORWARD -j LOG -o eth0
+iptables -A FORWARD -j DROP -o eth0
