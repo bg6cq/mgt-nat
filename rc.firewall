@@ -25,9 +25,10 @@ iptables -t nat -F
 
 
 iptables -A FORWARD -j DROP -p tcp --dport 445
-iptables -A FORWARD -j DROP -s 10.10.75.80
+#iptables -A FORWARD -j DROP -s 10.10.75.80
 
 iptables -t nat -A POSTROUTING -j ACCEPT -d 202.38.64.0/19
+iptables -t nat -A POSTROUTING -j ACCEPT -d 202.38.96.0/24
 iptables -t nat -A POSTROUTING -j ACCEPT -d 210.45.64.0/20
 iptables -t nat -A POSTROUTING -j ACCEPT -d 210.45.112.0/20
 iptables -t nat -A POSTROUTING -j ACCEPT -d 211.86.144.0/20
@@ -41,6 +42,7 @@ iptables -t nat -A POSTROUTING -j ACCEPT -d 192.168.0.0/16
 iptables -t nat -A POSTROUTING -j SNAT -o eth0 --to 202.38.64.120
 
 iptables -A FORWARD -j ACCEPT -o eth0 -d 202.38.64.0/19
+iptables -A FORWARD -j ACCEPT -o eth0 -d 202.38.96.0/24
 iptables -A FORWARD -j ACCEPT -o eth0 -d 210.45.64.0/20
 iptables -A FORWARD -j ACCEPT -o eth0 -d 210.45.112.0/20
 iptables -A FORWARD -j ACCEPT -o eth0 -d 211.86.144.0/20
@@ -49,5 +51,13 @@ iptables -A FORWARD -j ACCEPT -o eth0 -d 114.214.160.0/19
 iptables -A FORWARD -j ACCEPT -o eth0 -d 114.214.192.0/18
 iptables -A FORWARD -j ACCEPT -o eth0 -d 10.0.0.0/8
 iptables -A FORWARD -j ACCEPT -o eth0 -d 192.168.0.0/16
+
+#物质楼10.10.176.101-103三个地址用于仪器衣表定位服务器，需要连接互联网
+iptables -A FORWARD -j ACCEPT -o eth0 -s 10.10.176.101
+iptables -A FORWARD -j ACCEPT -o eth0 -s 10.10.176.102
+iptables -A FORWARD -j ACCEPT -o eth0 -s 10.10.176.103
+
+iptables -A FORWARD -j DROP -o eth0 -s 10.10.75.80
+
 iptables -A FORWARD -j LOG -o eth0
 iptables -A FORWARD -j DROP -o eth0
